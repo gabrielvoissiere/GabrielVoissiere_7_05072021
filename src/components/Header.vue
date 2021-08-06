@@ -1,7 +1,7 @@
 <template>
     <header>
-        <router-link to="/">Accueil</router-link>
-        <router-link to="/profil">Mon profil</router-link>
+        <router-link class="link" to="/">Accueil</router-link>
+        <router-link class="link" to="/profil">Mon profil</router-link>
     </header>
     <router-view />
 </template>
@@ -11,3 +11,21 @@
         name: "Header"
     }
 </script>
+
+<style lang="scss">
+    header {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        background-color: black;
+
+        .link {
+            margin-left: 10px;
+            margin-right: 10px;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            color: white;
+            text-decoration: none;
+        }
+    }
+</style>
