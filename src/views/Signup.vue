@@ -98,8 +98,11 @@
                     axios
                         .post("http://localhost:3000/api/user/signup", this.user)
                         .then((response) => {
-                            console.log(response);
-                            this.displaySignup = false;
+                            if (response.statusText == "OK") {
+                                this.$router.push({
+                                    name: "Home"
+                                })
+                            }
                         })
                         .catch((error) => {
                             console.log(error.response);
