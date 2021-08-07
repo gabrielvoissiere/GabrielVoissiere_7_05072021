@@ -12,17 +12,17 @@
         <!-- nom -->
         <div class="login-block">
           <label for="name">Email</label>
-          <input type="text" placeholder="j.dupont@gmail.com" v-model="email">
+          <input type="text" placeholder="j.dupont@gmail.com" v-model="user.email">
         </div>
 
         <!-- mot de passe -->
         <div class="login-block">
           <!-- option pour afficher/masquer le mot de passe -->
           <label for="massword">Mot de passe <i @click="seen()" class="far fa-eye"></i></label>
-          <input :type="type" placeholder="******" v-model="mdp">
+          <input :type="type" placeholder="******" v-model="user.password">
         </div>
 
-        <button class="connection">Se Connecter</button>
+        <button class="connection" @click="login()">Se Connecter</button>
 
         <router-link id="signup" to="/signup">Pas de compte ? Inscrivez vous !</router-link>
 
@@ -36,6 +36,7 @@
 <script>
   // importation du composant Header
   import Header from '../components/Header.vue'
+  const axios = require('axios');
 
   export default {
     name: "Login",
@@ -46,8 +47,10 @@
       return {
         show: false,
         type: "password",
-        email: "",
-        mdp: ""
+        user: {
+          email: "",
+          password: ""
+        }
       }
     },
     methods: {
@@ -59,6 +62,17 @@
           this.show = false
           this.type = "password"
         }
+      },
+      login() {
+        axios
+          .post("http://localhost:3000/api/user/login", this.user)
+          .then((response) => {
+            console.log(response);
+            this.displaySignup = false;
+          })
+          .catch((error) => {
+            console.log(error.response);
+          });
       }
     }
   }
@@ -90,7 +104,7 @@
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        padding:8vh;
+        padding: 8vh;
         border-radius: 20px;
         box-shadow: 0px 0px 10px #b3b1b1;
         margin-left: 4vh;
