@@ -1,15 +1,20 @@
 <template>
   <div id="login">
-    <!-- ajout du composant Header -->
-    <Header />
 
     <div id="global">
       <!-- logo de l'entreprise -->
       <img src="../assets/logo.svg" alt="">
 
       <!-- Boite de connexion -->
+
       <div id="login-box">
         <!-- nom -->
+        <div class="login-block">
+          <label for="name">Prénom</label>
+          <input type="text" placeholder="Dupont" v-model="user.lastname">
+        </div>
+
+        <!-- email -->
         <div class="login-block">
           <label for="name">Email</label>
           <input type="text" placeholder="j.dupont@gmail.com" v-model="user.email">
@@ -35,19 +40,16 @@
 
 <script>
   // importation du composant Header
-  import Header from '../components/Header.vue'
   const axios = require('axios');
 
   export default {
     name: "Login",
-    components: {
-      Header
-    },
     data() {
       return {
         show: false,
         type: "password",
         user: {
+          lastname: "",
           email: "",
           password: ""
         }
@@ -68,6 +70,7 @@
           .post("http://localhost:3000/api/user/login", this.user)
           .then((response) => {
             if (response.statusText == "OK") {
+              sessionStorage.setItem("data", this.user.lastname)
               this.$router.push({
                 name: "Home"
               })

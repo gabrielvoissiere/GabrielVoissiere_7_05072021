@@ -1,7 +1,8 @@
 <template>
     <header>
-        <router-link class="link" to="/">Accueil</router-link>
+        <router-link class="link" to="/home">Accueil</router-link>
         <router-link class="link" to="/profil">Mon profil</router-link>
+        <router-link class="link" to="/">Se déconnecter</router-link>
     </header>
     <router-view />
 </template>

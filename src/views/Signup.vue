@@ -1,7 +1,5 @@
 <template>
     <div id="signup">
-        <!-- ajout du composant Header -->
-        <Header />
 
         <div id="global">
             <!-- logo de l'entreprise -->
@@ -57,14 +55,10 @@
 
 <script>
     // importation du composant Header
-    import Header from '../components/Header.vue'
     const axios = require('axios');
 
     export default {
         name: "Login",
-        components: {
-            Header
-        },
         data() {
             return {
                 show: false,
@@ -98,9 +92,10 @@
                     axios
                         .post("http://localhost:3000/api/user/signup", this.user)
                         .then((response) => {
-                            if (response.statusText == "OK") {
+                            console.log(response.statusText);
+                            if (response.statusText == "Created") {
                                 this.$router.push({
-                                    name: "Home"
+                                    name: "Login"
                                 })
                             }
                         })
