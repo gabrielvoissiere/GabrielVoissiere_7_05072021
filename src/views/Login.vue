@@ -1,5 +1,6 @@
 <template>
   <div id="login">
+    <Headerbis />
 
     <div id="global">
       <!-- logo de l'entreprise -->
@@ -40,10 +41,15 @@
 
 <script>
   // importation du composant Header
+  import Headerbis from '../components/Headerbis.vue'
+
   const axios = require('axios');
 
   export default {
     name: "Login",
+    components: {
+      Headerbis
+    },
     data() {
       return {
         show: false,
@@ -70,7 +76,6 @@
           .post("http://localhost:3000/api/user/login", this.user)
           .then((response) => {
             if (response.statusText == "OK") {
-              sessionStorage.setItem("data", this.user.lastname)
               this.$router.push({
                 name: "Home"
               })
@@ -97,7 +102,6 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-top: 20vh;
 
       img {
         margin-right: 4vh;

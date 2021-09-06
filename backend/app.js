@@ -14,11 +14,12 @@ const bodyParser = require('body-parser');
 const cors = require("cors") 
 
 // importation de la routes des sauces
-const stuffRoutes = require('./routes/sauce'); 
+const stuffRoutes = require('./routes/msg'); 
 // importation de la routes del'utilisateur
 const userRoutes = require('./routes/user');
 // chemin pCour les images 
 const path = require('path'); 
+const { createMsg } = require('./controllers/msg');
 
 // création de l'app express
 const app = express()
@@ -49,6 +50,19 @@ connection.connect(function (err) {
     }
   });
 
+  // creation de la table utilisateur si elle n'existe pas
+  let createMessage = `create table if not exists messages(
+                          id INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY,
+                          name VARCHAR(100) NOT NULL,
+                          message VARCHAR(100) NOT NULL
+                      )`;
+
+  connection.query(createMessage, function (err, results, fields) {
+    if (err) {
+      console.log(err.message);
+    }
+  });
+
   connection.end(function (err) {
     if (err) {
       return console.log(err.message);
@@ -67,7 +81,7 @@ app.use(express.json());
 // routes pour les images, sauces et utilisateur
 app.use('/images', express.static(path.join(__dirname, 'images')));
 app.use('/api/user', userRoutes);
-app.use('/api/sauces', stuffRoutes);
+app.use('/api/msg', stuffRoutes);
 
 // exportation de l'app
 module.exports = app

@@ -1,5 +1,6 @@
 <template>
     <div id="signup">
+        <Headerbis />
 
         <div id="global">
             <!-- logo de l'entreprise -->
@@ -46,6 +47,8 @@
 
                 <button class="connection" @click="passwordVerification()">S'inscrire</button>
 
+                <router-link id="login" to="/">Déja inscrit ? Connectez vous !</router-link>
+
             </div>
         </div>
 
@@ -55,10 +58,15 @@
 
 <script>
     // importation du composant Header
+    import Headerbis from '../components/Headerbis.vue'
+
     const axios = require('axios');
 
     export default {
         name: "Login",
+        components: {
+            Headerbis
+        },
         data() {
             return {
                 show: false,
@@ -109,6 +117,7 @@
 </script>
 
 <style lang="scss">
+
     #signup {
         width: 100%;
         height: 100%;
@@ -121,7 +130,6 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-top: 12vh;
 
             img {
                 margin-right: 4vh;
@@ -182,6 +190,13 @@
                     .signup-block {
                         margin: 0px 1vh;
                     }
+                }
+
+                #login {
+                    font-size: 0.75rem;
+                    margin-top: 2vh;
+                    color: black;
+                    text-decoration: none;
                 }
             }
         }
