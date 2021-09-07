@@ -7,9 +7,14 @@
 
     <div id="forum">
       <div id="forumText">
+
+        <div class="messages">
+          <ul id="message"></ul>
+        </div>
+
         <div class="input">
           <input type="text" placeholder="Ecrivez votre message ici" v-model="message.msg">
-          <div class="send" @click="postMsg()">
+          <div class="send" @click="getMsg()">
             <img src="../assets/send.svg" alt="send arrow">
           </div>
         </div>
@@ -69,6 +74,32 @@
           .catch((error) => {
             console.log(error.response);
           });
+      },
+      
+      getMsg() {
+        axios
+          .get("http://localhost:3000/api/msg")
+          .then((response) => {
+            if (response.statusText == "OK") {
+              console.log("ok");
+            }
+            let msgArray = response.data
+            console.log(response.data);
+            msgArray.forEach(elm => {
+              let forum = document.getElementById("message")
+
+              let msgBox = document.createElement("li")
+              let nameArea = document.createElement("h4")
+              nameArea.innerHTML = elm.name
+              let msgArea = document.createElement("p")
+              msgArea.innerHTML = elm.message
+
+              msgBox.appendChild(nameArea)
+              msgBox.appendChild(msgArea)
+
+              forum.appendChild(msgBox)
+            });
+          })
       }
     }
   }

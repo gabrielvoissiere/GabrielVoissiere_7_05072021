@@ -11,15 +11,22 @@ const database = require('../config')
 // connexion a la BDD
 let connection = mysql.createConnection(database);
 
-// // récupere toutes les sauces
-// exports.getAllMsg = (req, res, next) => {
-//     Msg.find()
-//         .then(things => res.status(200).json(things))
-//         .catch(error => res.status(400).json({
-//             error
-//         }));
-// }
+// récupere toutes les sauces
+exports.getAllMsg = (req, res, next) => {
+    Msg.find()
+        .then(things => res.status(200).json(things))
+        .catch(error => res.status(400).json({
+            error
+        }));
+}
 
+exports.getAllMsg = (req, res, next) => {
+    let getMsg = `SELECT * FROM messages`;
+    connection.query(getMsg, (error, results, fields) => {
+        console.log(JSON.stringify(results));
+        res.status(200).json(results)
+    })
+}
 // // récupere la sauce demander
 // exports.getOneMsg = (req, res, next) => {
 //     Msg.findOne({
@@ -33,20 +40,6 @@ let connection = mysql.createConnection(database);
 
 // crée une nouvelle sauce
 exports.createMsg = (req, res, next) => {
-    // const sauceObject = JSON.parse(req.body.sauce);
-    // delete sauceObject._id;
-    // const sauce = new Msg({
-    //     ...sauceObject,
-    //     imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
-    // });
-    // sauce.save()
-    //     .then(() => res.status(201).json({
-    //         message: 'Objet enregistré !'
-    //     }))
-    //     .catch(error => res.status(400).json({
-    //         error
-    //     }));
-
     if (req.body == undefined) {
         console.log("vide");
     } else {
