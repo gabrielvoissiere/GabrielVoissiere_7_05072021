@@ -2,19 +2,18 @@
   <div class="home">
     <Header />
 
-    <h1>Bienvenue !</h1>
+    <h1>Bienvenue {{ message.name }} !</h1>
     <p>{{ fullDate }}</p>
 
     <div id="forum">
       <div id="forumText">
 
-        <div class="messages">
-          <ul id="message"></ul>
+        <div id="messagesBox">
         </div>
 
         <div class="input">
           <input type="text" placeholder="Ecrivez votre message ici" v-model="message.msg">
-          <div class="send" @click="getMsg()">
+          <div class="send" @click="postMsg()">
             <img src="../assets/send.svg" alt="send arrow">
           </div>
         </div>
@@ -28,6 +27,8 @@
         </div>
       </div>
     </div>
+
+    <p @click="getMsg()">reload</p>
   </div>
 </template>
 
@@ -43,9 +44,11 @@
       return {
         date: "",
         message: {
-          name: "Bertrand",
-          msg: ""
-        }
+          name: sessionStorage.getItem("lastname"),
+          msg: "",
+          date: ""
+        },
+        textForum: {}
       }
     },
     components: {
@@ -64,18 +67,27 @@
     },
     methods: {
       postMsg() {
+        let date = new Date()
+        let day = date.getDate()
+        let month = date.getMonth()
+        let year = date.getFullYear()
+        let fullDate = day + "/" + month + "/" + year
+        this.message.date = fullDate
+
         axios
           .post("http://localhost:3000/api/msg", this.message)
           .then((response) => {
             if (response.statusText == "OK") {
               console.log("ok");
             }
+            this.message.msg = ""
+            this.getMsg()
           })
           .catch((error) => {
             console.log(error.response);
           });
       },
-      
+
       getMsg() {
         axios
           .get("http://localhost:3000/api/msg")
@@ -83,22 +95,68 @@
             if (response.statusText == "OK") {
               console.log("ok");
             }
-            let msgArray = response.data
-            console.log(response.data);
-            msgArray.forEach(elm => {
-              let forum = document.getElementById("message")
+            let box = document.getElementById("messagesBox")
+            if (box.innerHTML == "") {
+              let liste = document.createElement("ul")
+              liste.setAttribute("id", "message")
+              box.appendChild(liste)
 
-              let msgBox = document.createElement("li")
-              let nameArea = document.createElement("h4")
-              nameArea.innerHTML = elm.name
-              let msgArea = document.createElement("p")
-              msgArea.innerHTML = elm.message
+              let msgArray = response.data
+              msgArray.forEach(elm => {
+                let forum = document.getElementById("message")
 
-              msgBox.appendChild(nameArea)
-              msgBox.appendChild(msgArea)
+                let msgBox = document.createElement("li")
 
-              forum.appendChild(msgBox)
-            });
+                let nameArea = document.createElement("h4")
+                nameArea.innerHTML = elm.name
+
+                let msgArea = document.createElement("p")
+                msgArea.innerHTML = elm.message
+
+                let dateArea = document.createElement("h5")
+                dateArea.innerHTML = elm.date
+
+                msgBox.appendChild(nameArea)
+                msgBox.appendChild(dateArea)
+                msgBox.appendChild(msgArea)
+
+                forum.appendChild(msgBox)
+              });
+              let elm = document.getElementById('message');
+              elm.scrollTop = elm.scrollHeight;
+                 
+            } else {
+              box.removeChild(box.childNodes[0])
+              let liste = document.createElement("ul")
+              liste.setAttribute("id", "message")
+              box.appendChild(liste)
+
+              let msgArray = response.data
+              msgArray.forEach(elm => {
+                let forum = document.getElementById("message")
+
+                let msgBox = document.createElement("li")
+
+                let nameArea = document.createElement("h4")
+                nameArea.innerHTML = elm.name
+
+                let msgArea = document.createElement("p")
+                msgArea.innerHTML = elm.message
+
+                let dateArea = document.createElement("h5")
+                dateArea.innerHTML = elm.date
+
+                msgBox.appendChild(nameArea)
+                msgBox.appendChild(dateArea)
+                msgBox.appendChild(msgArea)
+
+                forum.appendChild(msgBox)
+              });
+              let elm = document.getElementById('message');
+              elm.scrollTop = elm.scrollHeight;
+            }
+
+
           })
       }
     }
@@ -117,6 +175,22 @@
       height: 60vh;
       box-shadow: 0px 0px 10px #b3b1b1;
       border-radius: 15px;
+
+      #messagesBox {
+        height: 90%;
+
+
+        #message {
+          height: 100%;
+          overflow: scroll;
+
+          li {
+            padding: 15px 0px 15px 0px;
+            border-bottom: 1px solid #000;
+            list-style-type: none;
+          }
+        }
+      }
     }
 
     #forumMedia {
@@ -161,8 +235,6 @@
         border-radius: 10px;
         padding: 5px;
       }
-
-
     }
   }
 </style>

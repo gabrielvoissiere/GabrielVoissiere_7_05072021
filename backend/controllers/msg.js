@@ -23,7 +23,6 @@ exports.getAllMsg = (req, res, next) => {
 exports.getAllMsg = (req, res, next) => {
     let getMsg = `SELECT * FROM messages`;
     connection.query(getMsg, (error, results, fields) => {
-        console.log(JSON.stringify(results));
         res.status(200).json(results)
     })
 }
@@ -43,8 +42,8 @@ exports.createMsg = (req, res, next) => {
     if (req.body == undefined) {
         console.log("vide");
     } else {
-        let postMessage = `INSERT INTO messages(name,message) 
-    VALUES('${req.body.name}','${req.body.msg}')`;
+        let postMessage = `INSERT INTO messages(name,message,date) 
+    VALUES("${req.body.name}","${req.body.msg}","${req.body.date}")`;
         connection.query(postMessage);
         console.log('message posté !');
         res.status(201).json({

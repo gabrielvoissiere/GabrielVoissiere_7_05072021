@@ -76,10 +76,12 @@
           .post("http://localhost:3000/api/user/login", this.user)
           .then((response) => {
             if (response.statusText == "OK") {
-              this.$router.push({
-                name: "Home"
-              })
+              console.log("ok");
             }
+            sessionStorage.setItem("lastname", this.user.lastname)
+            this.$router.push({
+              name: "Home"
+            })
           })
           .catch((error) => {
             console.log(error.response);

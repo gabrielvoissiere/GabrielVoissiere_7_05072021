@@ -54,7 +54,8 @@ connection.connect(function (err) {
   let createMessage = `create table if not exists messages(
                           id INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY,
                           name VARCHAR(100) NOT NULL,
-                          message VARCHAR(100) NOT NULL
+                          message VARCHAR(100) NOT NULL,
+                          date VARCHAR(100) NOT NULL
                       )`;
 
   connection.query(createMessage, function (err, results, fields) {
