@@ -4,6 +4,11 @@
 const Msg = require('../models/sauce');
 const express = require('express');
 const fs = require('fs');
+
+// const multer = require('../middleware/multer-config');
+const multer  = require('multer')
+const upload = multer({dest: './images/'})
+
 // importation de mysql
 const mysql = require('mysql')
 // importation des donnée de connection à la base de donnée
@@ -52,6 +57,21 @@ exports.createMsg = (req, res, next) => {
     }
 }
 
+// crée une nouvelle sauce
+exports.createMedia = (req, res, next) => {
+    
+    upload.single('uploaded_file')
+
+    // let postMessage = `INSERT INTO medias(imageUrl) 
+    // VALUES("${req.body.name}")`;
+    //     connection.query(postMessage);
+    //     console.log('media posté !');
+    //     res.status(201).json({
+    //         message: "media posté !"
+    //     });
+
+    // console.log(imageUrl);
+}
 // // modifier une sauce
 // exports.modifyThing = (req, res, next) => {
 //     const sauceObject = req.file ? {
@@ -98,80 +118,3 @@ exports.createMsg = (req, res, next) => {
 //         }));
 // };
 
-// // systeme de like et dislike
-// exports.likeDislikeMsg = (req, res, next) => {
-//     const like = req.body.like;
-//     const userId = req.body.userId;
-//     const sauceId = req.params.id;
-
-//     switch (like) {
-//         case 1:
-//             Msg.updateOne({
-//                     _id: sauceId
-//                 }, {
-//                     $inc: {
-//                         likes: 1
-//                     },
-//                     $push: {
-//                         usersLiked: userId
-//                     }
-//                 })
-//                 .then(() => res.status(200).json({
-//                     message: 'Msg likée !'
-//                 }))
-//                 .catch(error => res.status(400).json({
-//                     error
-//                 }));
-//             break;
-//         case 0:
-//             Msg.findOne({
-//                     _id: sauceId
-//                 })
-//                 .then(sauce => {
-//                     const likesOrDislikes = {};
-//                     const usersLikedOrDisliked = {};
-//                     if (sauce.usersLiked.includes(userId)) {
-//                         likesOrDislikes.likes = -1;
-//                         usersLikedOrDisliked.usersLiked = userId;
-//                     } else if (sauce.usersDisliked.includes(userId)) {
-//                         likesOrDislikes.dislikes = -1;
-//                         usersLikedOrDisliked.usersDisliked = userId;
-//                     }
-//                     Msg.updateOne({
-//                             _id: sauceId
-//                         }, {
-//                             $inc: likesOrDislikes,
-//                             $pull: usersLikedOrDisliked
-//                         })
-//                         .then(() => res.status(200).json({
-//                             message: 'Modifé !'
-//                         }))
-//                         .catch(error => res.status(400).json({
-//                             error
-//                         }));
-//                 })
-//                 .catch(error => res.status(500).json({
-//                     error
-//                 }));
-
-//             break;
-//         case -1:
-//             Msg.updateOne({
-//                     _id: sauceId
-//                 }, {
-//                     $inc: {
-//                         dislikes: 1
-//                     },
-//                     $push: {
-//                         usersDisliked: userId
-//                     }
-//                 })
-//                 .then(() => res.status(200).json({
-//                     message: 'Msg dislikée !'
-//                 }))
-//                 .catch(error => res.status(400).json({
-//                     error
-//                 }));
-//             break;
-//     }
-// }

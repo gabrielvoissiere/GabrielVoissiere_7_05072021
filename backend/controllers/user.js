@@ -121,8 +121,6 @@ exports.login = (req, res, next) => {
       })
     }
   })
-
-
 }
 
 // fonction qui masque le mail

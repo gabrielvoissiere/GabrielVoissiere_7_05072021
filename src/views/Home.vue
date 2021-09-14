@@ -18,24 +18,26 @@
           </div>
         </div>
       </div>
+
       <div id="forumMedia">
         <div class="input">
-          <input type="text" placeholder="Ecrivez votre message ici">
-          <div class="send">
-            <img src="../assets/send.svg" alt="send arrow">
-          </div>
+
+          <form action="http://localhost:3000/media" enctype="multipart/form-data" method="post">
+            <input type="file" name="uploaded_file" placeholder="Ecrivez votre message ici" id="files">
+            <button type="submit" class="send">
+              <img src="../assets/send.svg" alt="send arrow">
+            </button>
+          </form>
+          
         </div>
       </div>
     </div>
-
-    <p @click="getMsg()">reload</p>
   </div>
 </template>
 
 <script>
   // importation du composant Header
   import Header from '../components/Header.vue'
-
   const axios = require('axios');
 
   export default {
@@ -88,12 +90,36 @@
           });
       },
 
+      postMedia() {
+
+        const name = sessionStorage.getItem("lastname");
+        const file = document.getElementById("files").value;
+        const formData = new FormData();
+        formData.append("name", name);
+        formData.append("files", file);
+
+console.log(formData);
+
+        // axios
+        //   .post("http://localhost:3000/api/msg/media", formData)
+        //   .then((response) => {
+        //     if (response.statusText == "OK") {
+        //       console.log("ok");
+        //     }
+        //     this.message.msg = ""
+        //     this.getMsg()
+        //   })
+        //   .catch((error) => {
+        //     console.log(error.response);
+        //   });
+      },
+
       getMsg() {
         axios
           .get("http://localhost:3000/api/msg")
           .then((response) => {
             if (response.statusText == "OK") {
-              console.log("ok");
+              // console.log("ok");
             }
             let box = document.getElementById("messagesBox")
             if (box.innerHTML == "") {
@@ -124,7 +150,7 @@
               });
               let elm = document.getElementById('message');
               elm.scrollTop = elm.scrollHeight;
-                 
+
             } else {
               box.removeChild(box.childNodes[0])
               let liste = document.createElement("ul")
@@ -132,6 +158,7 @@
               box.appendChild(liste)
 
               let msgArray = response.data
+
               msgArray.forEach(elm => {
                 let forum = document.getElementById("message")
 
@@ -155,12 +182,81 @@
               let elm = document.getElementById('message');
               elm.scrollTop = elm.scrollHeight;
             }
-
-
           })
-      }
+      },
     }
   }
+
+  setInterval(() => {
+    axios
+      .get("http://localhost:3000/api/msg")
+      .then((response) => {
+        if (response.statusText == "OK") {
+          // console.log("ok");
+        }
+        let box = document.getElementById("messagesBox")
+        if (box.innerHTML == "") {
+          let liste = document.createElement("ul")
+          liste.setAttribute("id", "message")
+          box.appendChild(liste)
+
+          let msgArray = response.data
+          msgArray.forEach(elm => {
+            let forum = document.getElementById("message")
+
+            let msgBox = document.createElement("li")
+
+            let nameArea = document.createElement("h4")
+            nameArea.innerHTML = elm.name
+
+            let msgArea = document.createElement("p")
+            msgArea.innerHTML = elm.message
+
+            let dateArea = document.createElement("h5")
+            dateArea.innerHTML = elm.date
+
+            msgBox.appendChild(nameArea)
+            msgBox.appendChild(dateArea)
+            msgBox.appendChild(msgArea)
+
+            forum.appendChild(msgBox)
+          });
+          let elm = document.getElementById('message');
+          elm.scrollTop = elm.scrollHeight;
+
+        } else {
+          box.removeChild(box.childNodes[0])
+          let liste = document.createElement("ul")
+          liste.setAttribute("id", "message")
+          box.appendChild(liste)
+
+          let msgArray = response.data
+
+          msgArray.forEach(elm => {
+            let forum = document.getElementById("message")
+
+            let msgBox = document.createElement("li")
+
+            let nameArea = document.createElement("h4")
+            nameArea.innerHTML = elm.name
+
+            let msgArea = document.createElement("p")
+            msgArea.innerHTML = elm.message
+
+            let dateArea = document.createElement("h5")
+            dateArea.innerHTML = elm.date
+
+            msgBox.appendChild(nameArea)
+            msgBox.appendChild(dateArea)
+            msgBox.appendChild(msgArea)
+
+            forum.appendChild(msgBox)
+          });
+          let elm = document.getElementById('message');
+          elm.scrollTop = elm.scrollHeight;
+        }
+      })
+  }, 2000);
 </script>
 
 <style lang="scss">
@@ -211,6 +307,13 @@
       bottom: 0px;
       background-color: black;
       border-radius: 0px 0px 15px 15px;
+
+      form {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+      }
 
       .send {
         width: 10%;

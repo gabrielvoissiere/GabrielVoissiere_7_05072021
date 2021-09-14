@@ -64,6 +64,18 @@ connection.connect(function (err) {
     }
   });
 
+  // creation de la table images si elle n'existe pas
+  let createMedia = `create table if not exists medias(
+    id INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    imageUrl VARCHAR(100) NOT NULL
+)`;
+
+connection.query(createMedia, function (err, results, fields) {
+if (err) {
+console.log(err.message);
+}
+});
+
   connection.end(function (err) {
     if (err) {
       return console.log(err.message);
@@ -83,6 +95,27 @@ app.use(express.json());
 app.use('/images', express.static(path.join(__dirname, 'images')));
 app.use('/api/user', userRoutes);
 app.use('/api/msg', stuffRoutes);
+
+// !
+const multer  = require('multer')
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, './images')
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.fieldname + '-' + file.originalname)
+  }
+})
+
+const upload = multer({ storage: storage })
+
+app.post('/media', upload.single('uploaded_file'), function (req, res) {
+   // req.file is the name of your file in the form above, here 'uploaded_file'
+   // req.body will hold the text fields, if there were any 
+   console.log(req.file, req.body)
+});
+// !
 
 // exportation de l'app
 module.exports = app

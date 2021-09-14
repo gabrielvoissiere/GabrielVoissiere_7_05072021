@@ -8,6 +8,7 @@ const multer = require('../middleware/multer-config'); // importation de middlew
 router.get('/', msgCtrl.getAllMsg);
 // router.get('/:id', auth, msgCtrl.getOneMsg);
 router.post('/', msgCtrl.createMsg);
+router.post('/media', multer, msgCtrl.createMedia);
 // router.put('/:id', auth, multer, msgCtrl.modifyThing);
 // router.delete('/:id', auth, msgCtrl.deleteMsg);
 
