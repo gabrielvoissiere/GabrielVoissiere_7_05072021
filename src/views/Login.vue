@@ -79,6 +79,7 @@
               console.log("ok");
             }
             sessionStorage.setItem("lastname", this.user.lastname)
+            sessionStorage.setItem("token",response.data.token);
             this.$router.push({
               name: "Home"
             })

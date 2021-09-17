@@ -96,26 +96,5 @@ app.use('/images', express.static(path.join(__dirname, 'images')));
 app.use('/api/user', userRoutes);
 app.use('/api/msg', stuffRoutes);
 
-// !
-const multer  = require('multer')
-
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, './images')
-  },
-  filename: function (req, file, cb) {
-    cb(null, file.fieldname + '-' + file.originalname)
-  }
-})
-
-const upload = multer({ storage: storage })
-
-app.post('/media', upload.single('uploaded_file'), function (req, res) {
-   // req.file is the name of your file in the form above, here 'uploaded_file'
-   // req.body will hold the text fields, if there were any 
-   console.log(req.file, req.body)
-});
-// !
-
 // exportation de l'app
 module.exports = app

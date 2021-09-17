@@ -16,31 +16,19 @@ const database = require('../config')
 // connexion a la BDD
 let connection = mysql.createConnection(database);
 
-// récupere toutes les sauces
-exports.getAllMsg = (req, res, next) => {
-    Msg.find()
-        .then(things => res.status(200).json(things))
-        .catch(error => res.status(400).json({
-            error
-        }));
-}
-
 exports.getAllMsg = (req, res, next) => {
     let getMsg = `SELECT * FROM messages`;
     connection.query(getMsg, (error, results, fields) => {
         res.status(200).json(results)
     })
 }
-// // récupere la sauce demander
-// exports.getOneMsg = (req, res, next) => {
-//     Msg.findOne({
-//             _id: req.params.id
-//         })
-//         .then(thing => res.status(200).json(thing))
-//         .catch(error => res.status(404).json({
-//             error
-//         }));
-// }
+
+exports.getAllMedia = (req, res, next) => {
+    let getMsg = `SELECT * FROM medias`;
+    connection.query(getMsg, (error, results, fields) => {
+        res.status(200).json(results)
+    })
+}
 
 // crée une nouvelle sauce
 exports.createMsg = (req, res, next) => {
@@ -59,18 +47,17 @@ exports.createMsg = (req, res, next) => {
 
 // crée une nouvelle sauce
 exports.createMedia = (req, res, next) => {
-    
-    upload.single('uploaded_file')
+    // enregistre les image dans la bdd
+    `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+    // let mediaPath = req.protocol+"//"+req.get('host')+"/images/"+req.file.filename
 
-    // let postMessage = `INSERT INTO medias(imageUrl) 
-    // VALUES("${req.body.name}")`;
-    //     connection.query(postMessage);
-    //     console.log('media posté !');
-    //     res.status(201).json({
-    //         message: "media posté !"
-    //     });
-
-    // console.log(imageUrl);
+    let postMessage = `INSERT INTO medias(imageUrl) 
+    VALUES("${req.file.filename}")`;
+        connection.query(postMessage);
+        console.log('media posté !');
+        res.status(201).json({
+            message: "media posté !"
+        });
 }
 // // modifier une sauce
 // exports.modifyThing = (req, res, next) => {

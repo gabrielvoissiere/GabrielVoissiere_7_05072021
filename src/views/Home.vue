@@ -7,9 +7,7 @@
 
     <div id="forum">
       <div id="forumText">
-
-        <div id="messagesBox">
-        </div>
+        <div id="messagesBox"></div>
 
         <div class="input">
           <input type="text" placeholder="Ecrivez votre message ici" v-model="message.msg">
@@ -20,18 +18,23 @@
       </div>
 
       <div id="forumMedia">
-        <div class="input">
 
-          <form action="http://localhost:3000/media" enctype="multipart/form-data" method="post">
-            <input type="file" name="uploaded_file" placeholder="Ecrivez votre message ici" id="files">
-            <button type="submit" class="send">
-              <img src="../assets/send.svg" alt="send arrow">
-            </button>
-          </form>
-          
+        <div id="mediaBox">
+          <img src="../../backend/images/nai0TUD.jpg" alt="">
+          <img class="image" v-for="item in mediaUrl" :src="item.url" :key="item.url">
+        </div>
+
+        <div class="input">
+          <input type="file" @change="postMedia" name="uploaded_file" placeholder="Ecrivez votre message ici"
+            id="files">
+          <button type="submit" class="send" @click="onUpload()">
+            <img src="../assets/send.svg" alt="send arrow">
+          </button>
         </div>
       </div>
     </div>
+
+    <button @click="getMedia()">test</button>
   </div>
 </template>
 
@@ -50,7 +53,9 @@
           msg: "",
           date: ""
         },
-        textForum: {}
+        textForum: {},
+        media: null,
+        mediaUrl: []
       }
     },
     components: {
@@ -76,8 +81,14 @@
         let fullDate = day + "/" + month + "/" + year
         this.message.date = fullDate
 
+        const config = {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem("token")}`
+          }
+        }
+
         axios
-          .post("http://localhost:3000/api/msg", this.message)
+          .post("http://localhost:3000/api/msg", this.message, config)
           .then((response) => {
             if (response.statusText == "OK") {
               console.log("ok");
@@ -90,33 +101,15 @@
           });
       },
 
-      postMedia() {
-
-        const name = sessionStorage.getItem("lastname");
-        const file = document.getElementById("files").value;
-        const formData = new FormData();
-        formData.append("name", name);
-        formData.append("files", file);
-
-console.log(formData);
-
-        // axios
-        //   .post("http://localhost:3000/api/msg/media", formData)
-        //   .then((response) => {
-        //     if (response.statusText == "OK") {
-        //       console.log("ok");
-        //     }
-        //     this.message.msg = ""
-        //     this.getMsg()
-        //   })
-        //   .catch((error) => {
-        //     console.log(error.response);
-        //   });
-      },
-
       getMsg() {
+        const config = {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem("token")}`
+          }
+        }
+
         axios
-          .get("http://localhost:3000/api/msg")
+          .get("http://localhost:3000/api/msg", config)
           .then((response) => {
             if (response.statusText == "OK") {
               // console.log("ok");
@@ -184,12 +177,64 @@ console.log(formData);
             }
           })
       },
+
+      postMedia(event) {
+        console.log(event);
+        this.media = event.target.files[0]
+        console.log(this.media);
+      },
+
+      onUpload() {
+        const config = {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem("token")}`
+          }
+        }
+
+        const fd = new FormData()
+        fd.append('image', this.media, this.media.name)
+
+        axios
+          .post("http://localhost:3000/api/msg/media", fd, config)
+          .then(res => {
+            console.log(res);
+          })
+          .catch((error) => {
+            console.log(error.response);
+          });
+      },
+
+      getMedia() {
+        const config = {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem("token")}`
+          }
+        }
+
+        axios
+          .get("http://localhost:3000/api/msg/media", config)
+          .then((response) => {
+            if (response.statusText == "OK") {
+              // console.log("ok");
+            }
+            response.data.forEach(elm => {
+              this.mediaUrl.push({url: "./src/assets/images/"+elm.imageUrl})
+            });
+          })
+      },
+
     }
   }
 
   setInterval(() => {
+    const config = {
+      headers: {
+        Authorization: `Bearer ${sessionStorage.getItem("token")}`
+      }
+    }
+
     axios
-      .get("http://localhost:3000/api/msg")
+      .get("http://localhost:3000/api/msg", config)
       .then((response) => {
         if (response.statusText == "OK") {
           // console.log("ok");
@@ -256,10 +301,14 @@ console.log(formData);
           elm.scrollTop = elm.scrollHeight;
         }
       })
-  }, 2000);
+  }, 20000);
 </script>
 
 <style lang="scss">
+  ::-webkit-scrollbar {
+    display: none;
+  }
+
   #forum {
     display: flex;
     justify-content: space-around;
@@ -295,6 +344,21 @@ console.log(formData);
       height: 60vh;
       box-shadow: 0px 0px 10px #b3b1b1;
       border-radius: 15px;
+
+      .image {
+        width: 90%;
+        height: auto;
+        object-fit: contain;
+      }
+
+      #mediaBox {
+        width: 100%;
+        height: 90%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        overflow: scroll;
+      }
     }
 
     .input {
