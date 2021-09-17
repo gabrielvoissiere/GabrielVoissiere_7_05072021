@@ -20,8 +20,7 @@
       <div id="forumMedia">
 
         <div id="mediaBox">
-          <img src="../../backend/images/nai0TUD.jpg" alt="">
-          <img class="image" v-for="item in mediaUrl" :src="item.url" :key="item.url">
+          <img class="image" v-for="item in mediaUrl" :src="require(`@/assets/images/${item}`)" :key="item.url">
         </div>
 
         <div class="input">
@@ -218,7 +217,7 @@
               // console.log("ok");
             }
             response.data.forEach(elm => {
-              this.mediaUrl.push({url: "./src/assets/images/"+elm.imageUrl})
+              this.mediaUrl.push(elm.imageUrl)
             });
           })
       },
