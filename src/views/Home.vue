@@ -4,6 +4,7 @@
 
     <h1>Bienvenue {{ message.name }} !</h1>
     <p>{{ fullDate }}</p>
+    <button @click="delUser()">Supprimer mon profil</button>
 
     <div id="forum">
       <div id="forumText">
@@ -240,85 +241,103 @@
           })
       },
 
+      delUser() {
+        const config = {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem("token")}`
+          }
+        }
+        let user = {email: sessionStorage.getItem('email')}
+        axios
+          .post("http://localhost:3000/api/user/delete", user, config)
+          .then(response => {
+            console.log(response);
+          })
+          .catch((error) => {
+            console.log(error.response);
+          });
+          setTimeout(() => {
+            this.$router.replace({ name: 'Login'})
+          }, 1000);
+        
+      }
     }
   }
 
-  setInterval(() => {
-    const config = {
-      headers: {
-        Authorization: `Bearer ${sessionStorage.getItem("token")}`
-      }
+  const config = {
+    headers: {
+      Authorization: `Bearer ${sessionStorage.getItem("token")}`
     }
+  }
 
-    axios
-      .get("http://localhost:3000/api/msg", config)
-      .then((response) => {
-        if (response.statusText == "OK") {
-          // console.log("ok");
-        }
-        let box = document.getElementById("messagesBox")
-        if (box.innerHTML == "") {
-          let liste = document.createElement("ul")
-          liste.setAttribute("id", "message")
-          box.appendChild(liste)
+  axios
+    .get("http://localhost:3000/api/msg", config)
+    .then((response) => {
+      if (response.statusText == "OK") {
+        // console.log("ok");
+      }
+      let box = document.getElementById("messagesBox")
+      if (box.innerHTML == "") {
+        let liste = document.createElement("ul")
+        liste.setAttribute("id", "message")
+        box.appendChild(liste)
 
-          let msgArray = response.data
-          msgArray.forEach(elm => {
-            let forum = document.getElementById("message")
+        let msgArray = response.data
+        msgArray.forEach(elm => {
+          let forum = document.getElementById("message")
 
-            let msgBox = document.createElement("li")
+          let msgBox = document.createElement("li")
 
-            let nameArea = document.createElement("h4")
-            nameArea.innerHTML = elm.name
+          let nameArea = document.createElement("h4")
+          nameArea.innerHTML = elm.name
 
-            let msgArea = document.createElement("p")
-            msgArea.innerHTML = elm.message
+          let msgArea = document.createElement("p")
+          msgArea.innerHTML = elm.message
 
-            let dateArea = document.createElement("h5")
-            dateArea.innerHTML = elm.date
+          let dateArea = document.createElement("h5")
+          dateArea.innerHTML = elm.date
 
-            msgBox.appendChild(nameArea)
-            msgBox.appendChild(dateArea)
-            msgBox.appendChild(msgArea)
+          msgBox.appendChild(nameArea)
+          msgBox.appendChild(dateArea)
+          msgBox.appendChild(msgArea)
 
-            forum.appendChild(msgBox)
-          });
-          let elm = document.getElementById('message');
-          elm.scrollTop = elm.scrollHeight;
+          forum.appendChild(msgBox)
+        });
+        let elm = document.getElementById('message');
+        elm.scrollTop = elm.scrollHeight;
 
-        } else {
-          box.removeChild(box.childNodes[0])
-          let liste = document.createElement("ul")
-          liste.setAttribute("id", "message")
-          box.appendChild(liste)
+      } else {
+        box.removeChild(box.childNodes[0])
+        let liste = document.createElement("ul")
+        liste.setAttribute("id", "message")
+        box.appendChild(liste)
 
-          let msgArray = response.data
+        let msgArray = response.data
 
-          msgArray.forEach(elm => {
-            let forum = document.getElementById("message")
+        msgArray.forEach(elm => {
+          let forum = document.getElementById("message")
 
-            let msgBox = document.createElement("li")
+          let msgBox = document.createElement("li")
 
-            let nameArea = document.createElement("h4")
-            nameArea.innerHTML = elm.name
+          let nameArea = document.createElement("h4")
+          nameArea.innerHTML = elm.name
 
-            let msgArea = document.createElement("p")
-            msgArea.innerHTML = elm.message
+          let msgArea = document.createElement("p")
+          msgArea.innerHTML = elm.message
 
-            let dateArea = document.createElement("h5")
-            dateArea.innerHTML = elm.date
+          let dateArea = document.createElement("h5")
+          dateArea.innerHTML = elm.date
 
-            msgBox.appendChild(nameArea)
-            msgBox.appendChild(dateArea)
-            msgBox.appendChild(msgArea)
+          msgBox.appendChild(nameArea)
+          msgBox.appendChild(dateArea)
+          msgBox.appendChild(msgArea)
 
-            forum.appendChild(msgBox)
-          });
-          let elm = document.getElementById('message');
-          elm.scrollTop = elm.scrollHeight;
-        }
-      })
-  }, 20000);
+          forum.appendChild(msgBox)
+        });
+        let elm = document.getElementById('message');
+        elm.scrollTop = elm.scrollHeight;
+      }
+    })
 </script>
 
 <style lang="scss">

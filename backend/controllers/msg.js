@@ -59,27 +59,6 @@ exports.createMedia = (req, res, next) => {
             message: "media posté !"
         });
 }
-// // modifier une sauce
-// exports.modifyThing = (req, res, next) => {
-//     const sauceObject = req.file ? {
-//         ...JSON.parse(req.body.thing),
-//         imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
-//     } : {
-//         ...req.body
-//     };
-//     Msg.updateOne({
-//             _id: req.params.id
-//         }, {
-//             ...sauceObject,
-//             _id: req.params.id
-//         })
-//         .then(() => res.status(200).json({
-//             message: 'Objet modifié !'
-//         }))
-//         .catch(error => res.status(400).json({
-//             error
-//         }));
-// };
 
 // // supprimer une sauce
 // exports.deleteMsg = (req, res, next) => {

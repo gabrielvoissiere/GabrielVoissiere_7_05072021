@@ -123,6 +123,12 @@ exports.login = (req, res, next) => {
   })
 }
 
+exports.deleteUser = (req, res, next) => {
+  let delUser = `DELETE FROM users WHERE email="${req.body.email}"`
+  connection.query(delUser);
+  console.log("user deleted");
+}
+
 // fonction qui masque le mail
 function maskEmail(email) {
   const splited = email.split('@');

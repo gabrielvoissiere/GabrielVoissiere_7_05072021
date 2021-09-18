@@ -78,8 +78,30 @@
             if (response.statusText == "OK") {
               console.log("ok");
             }
+            // fonction qui masque le mail
+
+            function maskEmail(email) {
+              const splited = email.split('@');
+              const leftMail = replaceWithStars(splited[0]);
+              const rightMail = replaceWithStars(splited[1]);
+              return `${leftMail}@${rightMail}`;
+            }
+
+            // fonction qui remplace les caratere par des "*"
+            function replaceWithStars(str) {
+              let newStr = '';
+              for (let i = 0; i < str.length; i++) {
+                if (i < str.length / 2) {
+                  newStr += '*'
+                } else {
+                  newStr += str[i]
+                }
+              }
+              return newStr;
+            }
             sessionStorage.setItem("lastname", this.user.lastname)
-            sessionStorage.setItem("token",response.data.token);
+            sessionStorage.setItem("email", maskEmail(this.user.email))
+            sessionStorage.setItem("token", response.data.token);
             this.$router.push({
               name: "Home"
             })
