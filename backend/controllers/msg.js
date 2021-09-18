@@ -51,8 +51,8 @@ exports.createMedia = (req, res, next) => {
     `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
     // let mediaPath = req.protocol+"//"+req.get('host')+"/images/"+req.file.filename
 
-    let postMessage = `INSERT INTO medias(imageUrl) 
-    VALUES("${req.file.filename}")`;
+    let postMessage = `INSERT INTO medias(imageUrl,lastname) 
+    VALUES("${req.file.filename}","${req.body.lastname}")`;
         connection.query(postMessage);
         console.log('media posté !');
         res.status(201).json({

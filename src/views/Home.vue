@@ -20,7 +20,10 @@
       <div id="forumMedia">
 
         <div id="mediaBox">
-          <img class="image" v-for="item in mediaUrl" :src="require(`@/assets/images/${item}`)" :key="item.url">
+          <div v-for="item in mediaInfo" :key="item" class="media">
+            <p>{{ item.lastname }}</p>
+            <img class="image" :src="require(`@/assets/images/${item.url}`)">
+          </div>
         </div>
 
         <div class="input">
@@ -54,7 +57,7 @@
         },
         textForum: {},
         media: null,
-        mediaUrl: []
+        mediaInfo: [],
       }
     },
     components: {
@@ -192,6 +195,7 @@
 
         const fd = new FormData()
         fd.append('image', this.media, this.media.name)
+        fd.append('lastname', sessionStorage.getItem("lastname"))
 
         axios
           .post("http://localhost:3000/api/msg/media", fd, config)
@@ -216,9 +220,23 @@
             if (response.statusText == "OK") {
               // console.log("ok");
             }
-            response.data.forEach(elm => {
-              this.mediaUrl.push(elm.imageUrl)
-            });
+            if (this.mediaInfo == []) {
+              response.data.forEach(elm => {
+                this.mediaInfo.push({
+                  url: elm.imageUrl,
+                  lastname: elm.lastname
+                })
+              });
+            } else {
+              this.mediaInfo = []
+              response.data.forEach(elm => {
+                this.mediaInfo.push({
+                  url: elm.imageUrl,
+                  lastname: elm.lastname
+                })
+              });
+            }
+
           })
       },
 

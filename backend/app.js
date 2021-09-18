@@ -67,7 +67,8 @@ connection.connect(function (err) {
   // creation de la table images si elle n'existe pas
   let createMedia = `create table if not exists medias(
     id INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    imageUrl VARCHAR(100) NOT NULL
+    imageUrl VARCHAR(100) NOT NULL,
+    lastname VARCHAR(100) NOT NULL
 )`;
 
 connection.query(createMedia, function (err, results, fields) {
