@@ -18,7 +18,7 @@
         <!-- email -->
         <div class="login-block">
           <label for="name">Email</label>
-          <input type="text" placeholder="j.dupont@gmail.com" v-model="user.email">
+          <input type="text" autocomplete="email" placeholder="j.dupont@gmail.com" v-model="user.email">
         </div>
 
         <!-- mot de passe -->
