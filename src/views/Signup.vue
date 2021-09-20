@@ -5,10 +5,8 @@
         <div id="global">
             <!-- logo de l'entreprise -->
             <img src="../assets/logo.svg" alt="">
-
             <!-- Boite de connexion -->
             <div id="signup-box">
-
                 <div class="horizontal">
                     <!-- nom -->
                     <div class="signup-block">
@@ -22,13 +20,11 @@
                         <input type="text" placeholder="Jérémy" v-model="user.lastName">
                     </div>
                 </div>
-
                 <!-- mail -->
                 <div class="signup-block email">
                     <label for="name">Email</label>
                     <input type="text" placeholder="j.dupont@gmail.com" v-model="user.email">
                 </div>
-
                 <div class="horizontal">
                     <!-- mot de passe -->
                     <div class="signup-block">
@@ -36,7 +32,6 @@
                         <label for="password">Mot de passe <i @click="seen()" class="far fa-eye"></i></label>
                         <input :type="type" placeholder="******" v-model="user.password">
                     </div>
-
                     <!-- confirmation mot de passe -->
                     <div class="signup-block">
                         <!-- option pour afficher/masquer le mot de passe -->
@@ -44,19 +39,15 @@
                         <input :type="type" :placeholder="passwordPlaceholder" v-model="confirmPassword">
                     </div>
                 </div>
-
                 <select name="role" id="role" v-model="user.role">
                     <option value="admin">admin</option>
                     <option value="classic">classic</option>
                 </select>
 
                 <button class="connection" @click="passwordVerification()">S'inscrire</button>
-
                 <router-link id="login" to="/">Déja inscrit ? Connectez vous !</router-link>
-
             </div>
         </div>
-
         <p id="copyright">copyright - Groupomania 2021</p>
     </div>
 </template>
@@ -89,10 +80,10 @@
         },
         methods: {
             seen() {
-                if (this.show == false) {
+                if (!this.show) {
                     this.show = true
                     this.type = "text"
-                } else if (this.show == true) {
+                } else {
                     this.show = false
                     this.type = "password"
                 }
@@ -102,7 +93,6 @@
                     this.confirmPassword = ''
                     this.passwordPlaceholder = 'mauvais mot de passe'
                 } else {
-
                     axios
                         .post("http://localhost:3000/api/user/signup", this.user)
                         .then((response) => {
@@ -123,7 +113,6 @@
 </script>
 
 <style lang="scss">
-
     #signup {
         width: 100%;
         height: 100%;

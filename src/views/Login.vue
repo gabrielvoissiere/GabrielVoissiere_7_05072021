@@ -5,22 +5,18 @@
     <div id="global">
       <!-- logo de l'entreprise -->
       <img src="../assets/logo.svg" alt="">
-
       <!-- Boite de connexion -->
-
       <div id="login-box">
         <!-- nom -->
         <div class="login-block">
           <label for="name">Prénom</label>
           <input type="text" placeholder="Dupont" v-model="user.lastname">
         </div>
-
         <!-- email -->
         <div class="login-block">
           <label for="name">Email</label>
           <input type="text" autocomplete="email" placeholder="j.dupont@gmail.com" v-model="user.email">
         </div>
-
         <!-- mot de passe -->
         <div class="login-block">
           <!-- option pour afficher/masquer le mot de passe -->
@@ -29,12 +25,10 @@
         </div>
 
         <button class="connection" @click="login()">Se Connecter</button>
-
         <router-link id="signup" to="/signup">Pas de compte ? Inscrivez vous !</router-link>
-
       </div>
     </div>
-
+    <!-- copyright -->
     <p id="copyright">copyright - Groupomania 2021</p>
   </div>
 </template>
@@ -85,7 +79,6 @@
               const rightMail = replaceWithStars(splited[1]);
               return `${leftMail}@${rightMail}`;
             }
-
             // fonction qui remplace les caratere par des "*"
             function replaceWithStars(str) {
               let newStr = '';
@@ -98,6 +91,7 @@
               }
               return newStr;
             }
+            // stockage des infos pour la durée de la session
             sessionStorage.setItem("lastname", this.user.lastname)
             sessionStorage.setItem("email", maskEmail(this.user.email))
             sessionStorage.setItem("token", response.data.token);

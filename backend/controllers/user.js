@@ -1,7 +1,6 @@
 /* eslint-disable no-undef */
 /* eslint-disable no-unused-vars */
-// importation du modèle
-const User = require('../models/User');
+
 // Package de cryptage pour le mot de passe
 const bcrypt = require('bcrypt');
 //Package de création et de vérification des token
@@ -26,7 +25,6 @@ schemaPasswordValidator // 8 caractères minimum et 50 caractères maximum, avec
   .is().not().oneOf(['Passw0rd', 'Password123']); // valeur interdite
 
 exports.signup = (req, res, next) => {
-  // console.log("dans signup");
 
   // verification de la conformiter du mot de passe
   if (schemaPasswordValidator.validate(req.body.password) == true) {
@@ -61,6 +59,7 @@ exports.login = (req, res, next) => {
   let name = req.body.lastname
   let userRole
 
+  // trouve le role de l'utilisateur dans la bdd
   let role = `SELECT role FROM users WHERE email=?`
   connection.query(role, email, (error, results, fields) => {
     userRole = results[0].role
@@ -92,7 +91,6 @@ exports.login = (req, res, next) => {
 
           // verification de la conformiter du mot de passe
           connection.query(verifsql, email, (error, results, fields) => {
-            // console.log(results[0].password);
             bcrypt.compare(req.body.password, results[0].password) // compare le mdp envoyé par l'utilisateur avec le mot de passe de la bdd
               .then(valid => { // test si comparaison est valable ou non
                 if (!valid) {
@@ -114,8 +112,8 @@ exports.login = (req, res, next) => {
                       expiresIn: '24h'
                     } // configuration du délai d’expiration du token
                   ),
-                  email: maskEmail(req.body.email),
-                  role: userRole
+                  email: maskEmail(req.body.email), // ajout du mail 
+                  role: userRole // et du role à la reponse
                 });
               })
               .catch(error => res.status(500).json({
@@ -129,6 +127,7 @@ exports.login = (req, res, next) => {
 }
 
 exports.deleteUser = (req, res, next) => {
+  // selectionne l'utilisateur via son email et le supprime
   let delUser = `DELETE FROM users WHERE email="${req.body.email}"`
   connection.query(delUser);
   console.log("user deleted");

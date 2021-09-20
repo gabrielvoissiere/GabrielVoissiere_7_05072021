@@ -1,21 +1,21 @@
 /* eslint-disable no-undef */
 /* eslint-disable no-unused-vars */
 
-const Msg = require('../models/sauce');
 const express = require('express');
 const fs = require('fs');
-
-// const multer = require('../middleware/multer-config');
+// importation de multer
 const multer  = require('multer')
-const upload = multer({dest: './images/'})
 
 // importation de mysql
 const mysql = require('mysql')
+
 // importation des donnée de connection à la base de donnée
 const database = require('../config')
+
 // connexion a la BDD
 let connection = mysql.createConnection(database);
 
+// recuperer tous les messages
 exports.getAllMsg = (req, res, next) => {
     let getMsg = `SELECT * FROM messages`;
     connection.query(getMsg, (error, results, fields) => {
@@ -23,6 +23,7 @@ exports.getAllMsg = (req, res, next) => {
     })
 }
 
+// recupere tout les medias (images)
 exports.getAllMedia = (req, res, next) => {
     let getMsg = `SELECT * FROM medias`;
     connection.query(getMsg, (error, results, fields) => {
@@ -30,7 +31,7 @@ exports.getAllMedia = (req, res, next) => {
     })
 }
 
-// crée une nouvelle sauce
+// crée un nouveau message
 exports.createMsg = (req, res, next) => {
     if (req.body == undefined) {
         console.log("vide");
@@ -45,7 +46,7 @@ exports.createMsg = (req, res, next) => {
     }
 }
 
-// crée une nouvelle sauce
+// ajouter une photo
 exports.createMedia = (req, res, next) => {
     // enregistre les image dans la bdd
     `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
@@ -60,7 +61,7 @@ exports.createMedia = (req, res, next) => {
         });
 }
 
-// supprimer une sauce
+// supprimer un message (admon seulement)
 exports.deleteMsg = (req, res, next) => {
     let delMsg = `DELETE FROM messages WHERE id=${req.body.id}`;
     connection.query(delMsg, (error, results, fields) => {
@@ -69,7 +70,7 @@ exports.deleteMsg = (req, res, next) => {
     })
 };
 
-// supprimer une sauce
+// supprimer une image (admin seulement)
 exports.deleteMedia = (req, res, next) => {
     let delMsg = `DELETE FROM medias WHERE id=${req.body.id}`;
     connection.query(delMsg, (error, results, fields) => {
