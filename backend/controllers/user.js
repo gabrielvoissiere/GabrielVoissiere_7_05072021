@@ -36,8 +36,8 @@ exports.signup = (req, res, next) => {
         // masque le mail
         let email = maskEmail(req.body.email)
         // ajout de l'utilisateur dans la BDD via SQL
-        let sql = `INSERT INTO users(firstname,lastname,email,password) 
-        VALUES('${req.body.firstName}','${req.body.lastName}','${email}','${encryptedPassword}')`;
+        let sql = `INSERT INTO users(firstname,lastname,email,password,role) 
+        VALUES('${req.body.firstName}','${req.body.lastName}','${email}','${encryptedPassword}','${req.body.role}')`;
         connection.query(sql);
 
         console.log('utilisateur crée !');
@@ -56,11 +56,15 @@ exports.signup = (req, res, next) => {
 
 // connexion de l’utilisateur
 exports.login = (req, res, next) => {
-  // console.log('dans signup');
-
   // mask le mail
   let email = maskEmail(req.body.email)
   let name = req.body.lastname
+  let userRole
+
+  let role = `SELECT role FROM users WHERE email=?`
+  connection.query(role, email, (error, results, fields) => {
+    userRole = results[0].role
+  })
 
   // test la concordance du nom et du mail
   let namesql = `SELECT lastname FROM users WHERE email=?`;
@@ -110,7 +114,8 @@ exports.login = (req, res, next) => {
                       expiresIn: '24h'
                     } // configuration du délai d’expiration du token
                   ),
-                  email: maskEmail(req.body.email)
+                  email: maskEmail(req.body.email),
+                  role: userRole
                 });
               })
               .catch(error => res.status(500).json({

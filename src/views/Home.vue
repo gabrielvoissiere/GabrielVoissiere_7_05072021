@@ -3,13 +3,22 @@
     <Header />
 
     <h1>Bienvenue {{ message.name }} !</h1>
+    <h4 v-if="role == 'classic'">Compte administrateur</h4>
     <p>{{ fullDate }}</p>
     <button @click="delUser()">Supprimer mon profil</button>
 
     <div id="forum">
       <div id="forumText">
-        <div id="messagesBox"></div>
-
+        <div id="messagesBox">
+          <ul id="message">
+            <li v-for="item in textInfo" :key="item" :id="item.id">
+              <h4>{{ item.name }}</h4>
+              <h5>{{ item.date }}</h5>
+              <p>{{ item.message }}</p>
+              <button class="delBtn" v-if="role == 'classic'" @click="delMsg">Supprimer</button>
+            </li>
+          </ul>
+        </div>
         <div class="input">
           <input type="text" placeholder="Ecrivez votre message ici" v-model="message.msg">
           <div class="send" @click="postMsg()">
@@ -19,14 +28,13 @@
       </div>
 
       <div id="forumMedia">
-
         <div id="mediaBox">
-          <div v-for="item in mediaInfo" :key="item" class="media">
+          <div v-for="item in mediaInfo" :key="item" :id="item.id" class="media">
             <p>{{ item.lastname }}</p>
             <img class="image" :src="require(`@/assets/images/${item.url}`)">
+            <button class="delBtn" v-if="role == 'classic'" @click="delMedia">Supprimer</button>
           </div>
         </div>
-
         <div class="input">
           <input type="file" @change="postMedia" name="uploaded_file" placeholder="Ecrivez votre message ici"
             id="files">
@@ -36,8 +44,6 @@
         </div>
       </div>
     </div>
-
-    <button @click="getMedia()">test</button>
   </div>
 </template>
 
@@ -56,9 +62,10 @@
           msg: "",
           date: ""
         },
-        textForum: {},
+        textInfo: [],
         media: null,
         mediaInfo: [],
+        role: sessionStorage.getItem("role")
       }
     },
     components: {
@@ -117,74 +124,18 @@
             if (response.statusText == "OK") {
               // console.log("ok");
             }
-            let box = document.getElementById("messagesBox")
-            if (box.innerHTML == "") {
-              let liste = document.createElement("ul")
-              liste.setAttribute("id", "message")
-              box.appendChild(liste)
-
-              let msgArray = response.data
-              msgArray.forEach(elm => {
-                let forum = document.getElementById("message")
-
-                let msgBox = document.createElement("li")
-
-                let nameArea = document.createElement("h4")
-                nameArea.innerHTML = elm.name
-
-                let msgArea = document.createElement("p")
-                msgArea.innerHTML = elm.message
-
-                let dateArea = document.createElement("h5")
-                dateArea.innerHTML = elm.date
-
-                msgBox.appendChild(nameArea)
-                msgBox.appendChild(dateArea)
-                msgBox.appendChild(msgArea)
-
-                forum.appendChild(msgBox)
-              });
-              let elm = document.getElementById('message');
-              elm.scrollTop = elm.scrollHeight;
-
-            } else {
-              box.removeChild(box.childNodes[0])
-              let liste = document.createElement("ul")
-              liste.setAttribute("id", "message")
-              box.appendChild(liste)
-
-              let msgArray = response.data
-
-              msgArray.forEach(elm => {
-                let forum = document.getElementById("message")
-
-                let msgBox = document.createElement("li")
-
-                let nameArea = document.createElement("h4")
-                nameArea.innerHTML = elm.name
-
-                let msgArea = document.createElement("p")
-                msgArea.innerHTML = elm.message
-
-                let dateArea = document.createElement("h5")
-                dateArea.innerHTML = elm.date
-
-                msgBox.appendChild(nameArea)
-                msgBox.appendChild(dateArea)
-                msgBox.appendChild(msgArea)
-
-                forum.appendChild(msgBox)
-              });
-              let elm = document.getElementById('message');
-              elm.scrollTop = elm.scrollHeight;
-            }
+            this.textInfo = []
+            let msgArray = response.data
+            msgArray.forEach(elm => {
+              this.textInfo.push(elm)
+            });
+            let elm = document.getElementById('message');
+            elm.scrollTop = elm.scrollHeight;
           })
       },
 
       postMedia(event) {
-        console.log(event);
         this.media = event.target.files[0]
-        console.log(this.media);
       },
 
       onUpload() {
@@ -202,6 +153,7 @@
           .post("http://localhost:3000/api/msg/media", fd, config)
           .then(res => {
             console.log(res);
+            this.getMedia()
           })
           .catch((error) => {
             console.log(error.response);
@@ -221,23 +173,14 @@
             if (response.statusText == "OK") {
               // console.log("ok");
             }
-            if (this.mediaInfo == []) {
-              response.data.forEach(elm => {
-                this.mediaInfo.push({
-                  url: elm.imageUrl,
-                  lastname: elm.lastname
-                })
-              });
-            } else {
-              this.mediaInfo = []
-              response.data.forEach(elm => {
-                this.mediaInfo.push({
-                  url: elm.imageUrl,
-                  lastname: elm.lastname
-                })
-              });
-            }
-
+            this.mediaInfo = []
+            response.data.forEach(elm => {
+              this.mediaInfo.push({
+                url: elm.imageUrl,
+                lastname: elm.lastname,
+                id: elm.id
+              })
+            });
           })
       },
 
@@ -247,7 +190,9 @@
             Authorization: `Bearer ${sessionStorage.getItem("token")}`
           }
         }
-        let user = {email: sessionStorage.getItem('email')}
+        let user = {
+          email: sessionStorage.getItem('email')
+        }
         axios
           .post("http://localhost:3000/api/user/delete", user, config)
           .then(response => {
@@ -256,88 +201,58 @@
           .catch((error) => {
             console.log(error.response);
           });
-          setTimeout(() => {
-            this.$router.replace({ name: 'Login'})
-          }, 1000);
-        
+        setTimeout(() => {
+          this.$router.replace({
+            name: 'Login'
+          })
+        }, 1000);
+      },
+
+      delMsg(event) {
+        let msgId = {
+          id: event.path[1].attributes.id.nodeValue
+        };
+
+        const config = {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem("token")}`
+          },
+        }
+
+        axios
+          .post("http://localhost:3000/api/msg/delete", msgId, config)
+          .then(response => {
+            console.log(response);
+            this.getMsg()
+          })
+          .catch((error) => {
+            console.log(error.response);
+          });
+      },
+
+      delMedia(event) {
+        let mediaId = {
+          id: event.path[1].attributes.id.nodeValue
+        };
+
+        const config = {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem("token")}`
+          },
+        }
+
+        axios
+          .post("http://localhost:3000/api/msg/deleteMedia", mediaId, config)
+          .then(response => {
+            console.log(response);
+            this.getMedia()
+          })
+          .catch((error) => {
+            console.log(error.response);
+          });
       }
     }
   }
-
-  const config = {
-    headers: {
-      Authorization: `Bearer ${sessionStorage.getItem("token")}`
-    }
-  }
-
-  axios
-    .get("http://localhost:3000/api/msg", config)
-    .then((response) => {
-      if (response.statusText == "OK") {
-        // console.log("ok");
-      }
-      let box = document.getElementById("messagesBox")
-      if (box.innerHTML == "") {
-        let liste = document.createElement("ul")
-        liste.setAttribute("id", "message")
-        box.appendChild(liste)
-
-        let msgArray = response.data
-        msgArray.forEach(elm => {
-          let forum = document.getElementById("message")
-
-          let msgBox = document.createElement("li")
-
-          let nameArea = document.createElement("h4")
-          nameArea.innerHTML = elm.name
-
-          let msgArea = document.createElement("p")
-          msgArea.innerHTML = elm.message
-
-          let dateArea = document.createElement("h5")
-          dateArea.innerHTML = elm.date
-
-          msgBox.appendChild(nameArea)
-          msgBox.appendChild(dateArea)
-          msgBox.appendChild(msgArea)
-
-          forum.appendChild(msgBox)
-        });
-        let elm = document.getElementById('message');
-        elm.scrollTop = elm.scrollHeight;
-
-      } else {
-        box.removeChild(box.childNodes[0])
-        let liste = document.createElement("ul")
-        liste.setAttribute("id", "message")
-        box.appendChild(liste)
-
-        let msgArray = response.data
-
-        msgArray.forEach(elm => {
-          let forum = document.getElementById("message")
-
-          let msgBox = document.createElement("li")
-
-          let nameArea = document.createElement("h4")
-          nameArea.innerHTML = elm.name
-
-          let msgArea = document.createElement("p")
-          msgArea.innerHTML = elm.message
-
-          let dateArea = document.createElement("h5")
-          dateArea.innerHTML = elm.date
-
-          msgBox.appendChild(nameArea)
-          msgBox.appendChild(dateArea)
-          msgBox.appendChild(msgArea)
-
-          forum.appendChild(msgBox)
-        });
-        let elm = document.getElementById('message');
-        elm.scrollTop = elm.scrollHeight;
-      }
-    })
 </script>
 
 <style lang="scss">

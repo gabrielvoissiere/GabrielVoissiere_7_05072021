@@ -45,6 +45,11 @@
                     </div>
                 </div>
 
+                <select name="role" id="role" v-model="user.role">
+                    <option value="admin">admin</option>
+                    <option value="classic">classic</option>
+                </select>
+
                 <button class="connection" @click="passwordVerification()">S'inscrire</button>
 
                 <router-link id="login" to="/">Déja inscrit ? Connectez vous !</router-link>
@@ -77,7 +82,8 @@
                     firstName: "",
                     lastName: "",
                     email: "",
-                    password: ""
+                    password: "",
+                    role: ""
                 }
             }
         },

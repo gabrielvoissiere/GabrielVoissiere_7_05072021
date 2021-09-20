@@ -60,27 +60,20 @@ exports.createMedia = (req, res, next) => {
         });
 }
 
-// // supprimer une sauce
-// exports.deleteMsg = (req, res, next) => {
-//     Msg.findOne({
-//             _id: req.params.id
-//         })
-//         .then(thing => {
-//             const filename = thing.imageUrl.split('/images/')[1];
-//             fs.unlink(`images/${filename}`, () => {
-//                 Msg.deleteOne({
-//                         _id: req.params.id
-//                     })
-//                     .then(() => res.status(200).json({
-//                         message: 'Objet supprimé !'
-//                     }))
-//                     .catch(error => res.status(400).json({
-//                         error
-//                     }));
-//             });
-//         })
-//         .catch(error => res.status(500).json({
-//             error
-//         }));
-// };
+// supprimer une sauce
+exports.deleteMsg = (req, res, next) => {
+    let delMsg = `DELETE FROM messages WHERE id=${req.body.id}`;
+    connection.query(delMsg, (error, results, fields) => {
+        console.log('msg supprimer !');
+        res.status(200).json({ message: "msg supprimer !"})
+    })
+};
 
+// supprimer une sauce
+exports.deleteMedia = (req, res, next) => {
+    let delMsg = `DELETE FROM medias WHERE id=${req.body.id}`;
+    connection.query(delMsg, (error, results, fields) => {
+        console.log('media supprimer !');
+        res.status(200).json({ message: "media supprimer !"})
+    })
+};

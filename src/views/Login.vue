@@ -79,7 +79,6 @@
               console.log("ok");
             }
             // fonction qui masque le mail
-
             function maskEmail(email) {
               const splited = email.split('@');
               const leftMail = replaceWithStars(splited[0]);
@@ -102,9 +101,11 @@
             sessionStorage.setItem("lastname", this.user.lastname)
             sessionStorage.setItem("email", maskEmail(this.user.email))
             sessionStorage.setItem("token", response.data.token);
+            sessionStorage.setItem("role", response.data.role);
             this.$router.push({
               name: "Home"
             })
+            console.log(response);
           })
           .catch((error) => {
             console.log(error.response);

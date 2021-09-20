@@ -10,7 +10,8 @@ router.get('/media', auth, msgCtrl.getAllMedia);
 router.post('/', auth, msgCtrl.createMsg);
 router.post('/media', auth, multer, msgCtrl.createMedia);
 // router.put('/:id', auth, multer, msgCtrl.modifyThing);
-// router.delete('/:id', auth, msgCtrl.deleteMsg);
+router.post('/delete', auth, msgCtrl.deleteMsg);
+router.post('/deleteMedia', auth, msgCtrl.deleteMedia);
 
 
 module.exports = router;
