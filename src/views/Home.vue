@@ -34,7 +34,7 @@
         </div>
       </div>
 
-      <button id="downBtn" @click="scrollDawn()">Voir les derniers messages</button>
+      <button id="downBtn" @click="scrollDown()">Voir les derniers messages</button>
 
       <div id="forumMedia">
         <div id="mediaBox">
@@ -45,8 +45,7 @@
           </div>
         </div>
         <div class="input">
-          <input type="file" @change="addMedia" name="uploaded_file" placeholder="Ecrivez votre message ici"
-            id="files">
+          <input type="file" @change="addMedia" name="uploaded_file" placeholder="Ecrivez votre message ici" id="files">
           <button type="submit" class="send send-media" @click="postMedia()">
             <img src="../assets/send.svg" alt="send arrow">
           </button>
@@ -89,9 +88,6 @@
         let showFullDate = day + "/" + month + "/" + year
         return `nous somme le ${showFullDate}`
       },
-      textMsg() {
-        return this.$store.state.textMsg
-      }
     },
     methods: {
       postMsg() {
@@ -103,13 +99,21 @@
         this.message.date = fullDate
 
         this.$store.commit('postMsg', this.message)
-        this.$store.dispatch("postTextData")
+        this.$store.dispatch("postMsgData")
         this.message.msg = ""
+
+        this.$store.dispatch("getMsgData")
+        setTimeout(() => {
+          this.getMsg()
+          setTimeout(() => {
+            this.scrollDown()
+          }, 150);
+        }, 100);
       },
 
       getMsg() {
         this.textInfo = []
-        this.$store.state.textMsg.forEach(elm => {
+        this.$store.state.msgData.forEach(elm => {
           this.textInfo.push(elm)
         });
       },
@@ -126,11 +130,21 @@
         this.$store.commit('postMedia', fd)
         this.$store.dispatch("postMediaData")
         document.getElementById("files").value = ""
+
+        setTimeout(() => {
+          this.$store.dispatch("getMediaData")
+          setTimeout(() => {
+            this.getMedia()
+            setTimeout(() => {
+              this.scrollDown()
+            }, 200);
+          }, 150);
+        }, 100);
       },
 
       getMedia() {
         this.mediaInfo = []
-        this.$store.state.mediaMsg.forEach(elm => {
+        this.$store.state.mediaData.forEach(elm => {
           this.mediaInfo.push({
             url: elm.imageUrl,
             lastname: elm.lastname,
@@ -154,6 +168,16 @@
         };
         this.$store.commit("delMsg", msgId)
         this.$store.dispatch("delMsg")
+
+        setTimeout(() => {
+          this.$store.dispatch("getMsgData")
+          setTimeout(() => {
+            this.getMsg()
+            setTimeout(() => {
+              this.scrollDown()
+            }, 200);
+          }, 150);
+        }, 100);
       },
 
       delMedia(event) {
@@ -162,24 +186,37 @@
         };
         this.$store.commit("delMedia", mediaId)
         this.$store.dispatch("delMedia")
-      },
-
-      scrollDawn() {
-        this.getMsg()
-        this.getMedia()
 
         setTimeout(() => {
-          let media = document.getElementById('mediaBox');
-          media.scrollTop = media.scrollHeight;
+          this.$store.dispatch("getMediaData")
+          setTimeout(() => {
+            this.getMedia()
+            setTimeout(() => {
+              this.scrollDown()
+            }, 200);
+          }, 150);
+        }, 100);
+      },
 
-          let message = document.getElementById('message');
-          message.scrollTop = message.scrollHeight;
-        }, 500);
+      scrollDown() {
+        let media = document.getElementById('mediaBox');
+        media.scrollTop = media.scrollHeight;
+
+        let message = document.getElementById('message');
+        message.scrollTop = message.scrollHeight;
       }
     },
     mounted() {
-      this.$store.dispatch("getTextData")
+      this.$store.dispatch("getMsgData")
       this.$store.dispatch("getMediaData")
+
+      setTimeout(() => {
+        this.getMsg()
+        this.getMedia()
+        setTimeout(() => {
+          this.scrollDown()
+        }, 150);
+      }, 100);
     }
   }
 </script>

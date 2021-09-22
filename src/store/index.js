@@ -5,15 +5,15 @@ const axios = require('axios');
 
 export default createStore({
   state: {
-    textMsg: [],
-    mediaMsg: [],
+    msgData: [],
+    mediaData: [],
     message: {},
     media: {},
     msgId: {},
     mediaId: {}
   },
   actions: {
-    getTextData({
+    getMsgData({
       commit
     }) {
       const config = {
@@ -24,7 +24,7 @@ export default createStore({
 
       axios.get("http://localhost:3000/api/msg", config)
         .then(response => {
-          commit("updateTextData", response.data)
+          commit("updateMsgData", response.data)
         })
     },
     getMediaData({
@@ -41,7 +41,7 @@ export default createStore({
           commit("updateMediaData", response.data)
         })
     },
-    postTextData() {
+    postMsgData() {
       const config = {
         headers: {
           Authorization: `Bearer ${sessionStorage.getItem("token")}`
@@ -104,6 +104,7 @@ export default createStore({
         .post("http://localhost:3000/api/msg/delete", this.state.msgId, config)
         .then(response => {
           console.log(response);
+          console.clear()
         })
         .catch((error) => {
           console.log(error.response);
@@ -128,11 +129,11 @@ export default createStore({
     }
   },
   mutations: {
-    updateTextData(state, data) {
-      state.textMsg = data
+    updateMsgData(state, data) {
+      state.msgData = data
     },
     updateMediaData(state, data) {
-      state.mediaMsg = data
+      state.mediaData = data
     },
     postMsg(state, data) {
       state.message = data
