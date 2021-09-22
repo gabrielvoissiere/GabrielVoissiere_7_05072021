@@ -45,9 +45,9 @@
           </div>
         </div>
         <div class="input">
-          <input type="file" @change="postMedia" name="uploaded_file" placeholder="Ecrivez votre message ici"
+          <input type="file" @change="addMedia" name="uploaded_file" placeholder="Ecrivez votre message ici"
             id="files">
-          <button type="submit" class="send send-media" @click="onUpload()">
+          <button type="submit" class="send send-media" @click="postMedia()">
             <img src="../assets/send.svg" alt="send arrow">
           </button>
         </div>
@@ -60,13 +60,11 @@
 <script>
   // importation du composant Header
   import Header from '../components/Header.vue'
-  const axios = require('axios');
 
   export default {
     name: 'Home',
     data() {
       return {
-        date: "",
         message: {
           name: sessionStorage.getItem("lastname"),
           msg: "",
@@ -90,6 +88,9 @@
 
         let showFullDate = day + "/" + month + "/" + year
         return `nous somme le ${showFullDate}`
+      },
+      textMsg() {
+        return this.$store.state.textMsg
       }
     },
     methods: {
@@ -101,118 +102,45 @@
         let fullDate = day + "/" + month + "/" + year
         this.message.date = fullDate
 
-        const config = {
-          headers: {
-            Authorization: `Bearer ${sessionStorage.getItem("token")}`
-          }
-        }
-
-        axios
-          .post("http://localhost:3000/api/msg", this.message, config)
-          .then((response) => {
-            if (response.statusText == "OK") {
-              console.log("ok");
-            }
-            this.message.msg = ""
-            this.getMsg()
-          })
-          .catch((error) => {
-            console.log(error.response);
-          });
+        this.$store.commit('postMsg', this.message)
+        this.$store.dispatch("postTextData")
+        this.message.msg = ""
       },
 
       getMsg() {
-        const config = {
-          headers: {
-            Authorization: `Bearer ${sessionStorage.getItem("token")}`
-          }
-        }
-
-        axios
-          .get("http://localhost:3000/api/msg", config)
-          .then((response) => {
-            if (response.statusText == "OK") {
-              // console.log("ok");
-            }
-            this.textInfo = []
-            let msgArray = response.data
-            msgArray.forEach(elm => {
-              this.textInfo.push(elm)
-            });
-          })
+        this.textInfo = []
+        this.$store.state.textMsg.forEach(elm => {
+          this.textInfo.push(elm)
+        });
       },
 
-      postMedia(event) {
+      addMedia(event) {
         this.media = event.target.files[0]
       },
 
-      onUpload() {
-        const config = {
-          headers: {
-            Authorization: `Bearer ${sessionStorage.getItem("token")}`
-          }
-        }
-
+      postMedia() {
         const fd = new FormData()
         fd.append('image', this.media, this.media.name)
         fd.append('lastname', sessionStorage.getItem("lastname"))
 
-        axios
-          .post("http://localhost:3000/api/msg/media", fd, config)
-          .then(res => {
-            console.log(res);
-            this.getMedia()
-            this.media = null
-            document.getElementById("files").value = ""
-          })
-          .catch((error) => {
-            console.log(error.response);
-          });
+        this.$store.commit('postMedia', fd)
+        this.$store.dispatch("postMediaData")
+        document.getElementById("files").value = ""
       },
 
       getMedia() {
-        const config = {
-          headers: {
-            Authorization: `Bearer ${sessionStorage.getItem("token")}`
-          }
-        }
-
-        axios
-          .get("http://localhost:3000/api/msg/media", config)
-          .then((response) => {
-            if (response.statusText == "OK") {
-              // console.log("ok");
-            }
-            this.mediaInfo = []
-            response.data.forEach(elm => {
-              this.mediaInfo.push({
-                url: elm.imageUrl,
-                lastname: elm.lastname,
-                id: elm.id
-              })
-            });
-            let elm = document.getElementById('mediaBox');
-            elm.scrollTop = elm.scrollHeight;
+        this.mediaInfo = []
+        this.$store.state.mediaMsg.forEach(elm => {
+          this.mediaInfo.push({
+            url: elm.imageUrl,
+            lastname: elm.lastname,
+            id: elm.id
           })
+        });
       },
 
       delUser() {
-        const config = {
-          headers: {
-            Authorization: `Bearer ${sessionStorage.getItem("token")}`
-          }
-        }
-        let user = {
-          email: sessionStorage.getItem('email')
-        }
-        axios
-          .post("http://localhost:3000/api/user/delete", user, config)
-          .then(response => {
-            console.log(response);
-          })
-          .catch((error) => {
-            console.log(error.response);
-          });
+        this.$store.dispatch("delUser")
         setTimeout(() => {
           this.$router.replace({
             name: 'Login'
@@ -224,44 +152,16 @@
         let msgId = {
           id: event.path[1].attributes.id.nodeValue
         };
-
-        const config = {
-          headers: {
-            Authorization: `Bearer ${sessionStorage.getItem("token")}`
-          },
-        }
-
-        axios
-          .post("http://localhost:3000/api/msg/delete", msgId, config)
-          .then(response => {
-            console.log(response);
-            this.getMsg()
-          })
-          .catch((error) => {
-            console.log(error.response);
-          });
+        this.$store.commit("delMsg", msgId)
+        this.$store.dispatch("delMsg")
       },
 
       delMedia(event) {
         let mediaId = {
           id: event.path[1].attributes.id.nodeValue
         };
-
-        const config = {
-          headers: {
-            Authorization: `Bearer ${sessionStorage.getItem("token")}`
-          },
-        }
-
-        axios
-          .post("http://localhost:3000/api/msg/deleteMedia", mediaId, config)
-          .then(response => {
-            console.log(response);
-            this.getMedia()
-          })
-          .catch((error) => {
-            console.log(error.response);
-          });
+        this.$store.commit("delMedia", mediaId)
+        this.$store.dispatch("delMedia")
       },
 
       scrollDawn() {
@@ -276,6 +176,10 @@
           message.scrollTop = message.scrollHeight;
         }, 500);
       }
+    },
+    mounted() {
+      this.$store.dispatch("getTextData")
+      this.$store.dispatch("getMediaData")
     }
   }
 </script>
