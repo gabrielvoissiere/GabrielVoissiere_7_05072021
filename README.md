@@ -7,6 +7,7 @@ Pour créer la BDD :
 - aller dans le terminal mysql
 - taper CREATE DATABASE groupomania;
 - changer le mdp par le votre dans le fichier .env
+- les tables sont sont crée automatiquement
 
 Pour lancer le projet :
 
