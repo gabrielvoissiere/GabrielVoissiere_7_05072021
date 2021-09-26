@@ -19,7 +19,6 @@ const stuffRoutes = require('./routes/msg');
 const userRoutes = require('./routes/user');
 // chemin pCour les images 
 const path = require('path'); 
-const { createMsg } = require('./controllers/msg');
 
 // création de l'app express
 const app = express()

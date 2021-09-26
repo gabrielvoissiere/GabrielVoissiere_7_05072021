@@ -72,8 +72,14 @@ exports.deleteMsg = (req, res, next) => {
 
 // supprimer une image (admin seulement)
 exports.deleteMedia = (req, res, next) => {
-    let delMsg = `DELETE FROM medias WHERE id=${req.body.id}`;
-    connection.query(delMsg, (error, results, fields) => {
+    let getMedia = `SELECT imageUrl FROM medias WHERE id=${req.body.id}`
+    connection.query(getMedia, (error, results, fields) => {
+        fs.unlink(`../src/assets/images/${results[0].imageUrl}`, (err => {
+            if (err) console.log(err)
+        }))
+    })
+    let delMedia = `DELETE FROM medias WHERE id=${req.body.id}`;
+    connection.query(delMedia, (error, results, fields) => {
         console.log('media supprimer !');
         res.status(200).json({ message: "media supprimer !"})
     })

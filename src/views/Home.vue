@@ -113,6 +113,7 @@
 
       getMsg() {
         this.textInfo = []
+        this.$store.dispatch("getMsgData")
         this.$store.state.msgData.forEach(elm => {
           this.textInfo.push(elm)
         });
@@ -144,6 +145,7 @@
 
       getMedia() {
         this.mediaInfo = []
+        this.$store.dispatch("getMediaData")
         this.$store.state.mediaData.forEach(elm => {
           this.mediaInfo.push({
             url: elm.imageUrl,

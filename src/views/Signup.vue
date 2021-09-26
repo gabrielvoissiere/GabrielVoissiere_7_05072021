@@ -40,6 +40,7 @@
                     </div>
                 </div>
                 <select name="role" id="role" v-model="user.role">
+                    <option value="niveaux" disabled>-- niveau--</option>
                     <option value="admin">admin</option>
                     <option value="classic">classic</option>
                 </select>
