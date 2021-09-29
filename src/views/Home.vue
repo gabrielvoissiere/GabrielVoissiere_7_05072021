@@ -82,7 +82,7 @@
       fullDate() {
         let getdate = new Date()
         let day = getdate.getDate()
-        let month = getdate.getMonth()
+        let month = getdate.getMonth()+1
         let year = getdate.getFullYear()
 
         let showFullDate = day + "/" + month + "/" + year
@@ -93,7 +93,7 @@
       postMsg() {
         let date = new Date()
         let day = date.getDate()
-        let month = date.getMonth()
+        let month = date.getMonth()+1
         let year = date.getFullYear()
         let fullDate = day + "/" + month + "/" + year
         this.message.date = fullDate
