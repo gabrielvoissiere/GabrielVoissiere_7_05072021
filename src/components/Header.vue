@@ -1,13 +1,23 @@
 <template>
     <header>
-        <router-link class="link" to="/">Se déconnecter</router-link>
+        <router-link class="link" to="/" @click="logout()">Se déconnecter</router-link>
     </header>
     <router-view />
 </template>
 
 <script>
     export default {
-        name: "Header"
+        name: "Header",
+        data() {
+            return {
+                //
+            }
+        },
+        methods: {
+            logout() {
+                sessionStorage.clear()
+            }
+        },
     }
 </script>
 
